@@ -1,40 +1,39 @@
-  Animazione                      - Ghibli
-  Appuntamento Film               - Elio
-  Appuntamento Gioco              - Macchiavelli
-  Benvenuta a Spiazzi             - Timogno
-  Casinò                          - Joker
-  Ci sono giochi peggiori         - Fortuna
-  Come addestrare un drago        - Libertà
-  Due poltrone e un palco         - Candlelight
-  E' guerra                       - 1v1
-  E' mooolto lunga                - Dodici ore
-  Finalmente scegli tu            - Obbligato
-  First we mine then we craft     - Creeper
-  Fuori                           - Islanda?
-  Gitarella                       - Segrino
-  Guerre Stellari                 - Originale
-  Holiday                         - Gitona
-  Il 2%                           - Cattivone
-  Il Signore degli Anelli         - Smeagol
-  In una galassia lontana lontana - Skywalker
-  Insieme                         - Porada
-  Japan moment                    - Pesciolini
-  La Saga degli Skywalker         - R2D2
-  La Terra di Mezzo               - Beggins
-  Lo Hobbit                       - Smaug
-  Mc o Burger?                    - Burger
-  Pappa insieme                   - Gnam
-  Parliamone                      - Ritiro
-  Pizza, pasta & mandolino        - Margherita     
-  Primo appuntamento              - Convinzione
-  Primo bacio                     - Rosa
-  Qualcosa di freddo              - Pistacchio
-  Qualcuno ha detto cinema?       - IMAX?
-  Quanto manca?                   - Tanto
-  Questa è Berk                   - Sintesi illuminante
-  Ristorante                      - Fast Food
-  Sabbia o rocce?                 - Snorkeling
-  Slot Machine                    - Tetris
-  Stargazing                      - Telescoppio
+Animazione                      - Ghibli
+Appuntamento Film               - Elio
+Appuntamento Gioco              - Macchiavelli
+Benvenuta a Spiazzi             - Timogno
+Casinò                          - Joker
+Ci sono giochi peggiori         - Fortuna
+Come addestrare un drago        - Libertà
+Due poltrone e un palco         - Candlelight
+E' guerra                       - 1v1
+E' mooolto lunga                - Dodici ore
+Finalmente scegli tu            - Obbligato
+First we mine then we craft     - Creeper
+Fuori                           - Islanda?
+Gitarella                       - Segrino
+Guerre Stellari                 - Originale
+Holiday                         - Gitona
+Il 2%                           - Cattivone
+Il Signore degli Anelli         - Smeagol
+In una galassia lontana lontana - Skywalker
+Insieme                         - Porada
+Japan moment                    - Pesciolini
+La Saga degli Skywalker         - R2D2
+La Terra di Mezzo               - Beggins
+Lo Hobbit                       - Smaug
+Mc o Burger?                    - Burger
+Pappa insieme                   - Gnam
+Parliamone                      - Ritiro
+Pizza, pasta & mandolino        - Margherita     
+Primo appuntamento              - Convinzione
+Primo bacio                     - Rosa
+Qualcosa di freddo              - Pistacchio
+Qualcuno ha detto cinema?       - IMAX?
+Quanto manca?                   - Tanto
+Questa è Berk                   - Sintesi illuminante
+Ristorante                      - Fast Food
+Sabbia o rocce?                 - Snorkeling
+Slot Machine                    - Tetris
+Stargazing                      - Telescoppio
 The Hunger Games                - 12
-
