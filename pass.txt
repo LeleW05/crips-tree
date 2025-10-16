@@ -1,87 +1,39 @@
-Primo appuntamento              - Convinzione
-Parliamone                      - Ritiro
-Il 2%                           - Cattivone
-Insieme                         - Porada
-Primo bacio                     - Rosa
-Appuntamento Film               - Elio
-In una galassia lontana lontana - Skywalker
-Guerre Stellari                 - Originale
-La Saga degli Skywalker         - R2D2
-The Hunger Games                - 12
-Ci sono giochi peggiori         - Fortuna
-La Terra di Mezzo               - Beggins
-Il Signore degli Anelli         - Smeagol
-Lo Hobbit                       - Smaug
-Questa è Berk                   - Sintesi illuminante
-Come addestrare un drago        - Libertà
-Qualcuno ha detto cinema?       - IMAX?
-Finalmente scegli tu            - Obbligato
-Pappa insieme                   - Gnam
-Qualcosa di freddo              - Pistacchio
-Ristorante                      - Fast Food
-Mc o Burger?                    - Burger
-Japan moment                    - Pesciolini
-Pizza, pasta & mandolino        - Margherita     
-Gitarella                       - Segrino
-Quanto manca?                   - Tanto
-Benvenuta a Spiazzi             - Timogno
-Sabbia o rocce?                 - Snorkeling
-E' mooolto lunga                - Dodici ore
-Holiday                         - Gitona
-Fuori                           - Islanda?
 Animazione                      - Ghibli
+Appuntamento Film               - Elio
 Appuntamento Gioco              - Macchiavelli
+Benvenuta a Spiazzi             - Timogno
 Casinò                          - Joker
-E' guerra                       - 1v1
-Slot Machine                    - Tetris
-First we mine then we craft     - Creeper
-Qua si parla di stagioni        - Meteorologiche
-Stargazing                      - Telescoppio
+Ci sono giochi peggiori         - Fortuna
+Come addestrare un drago        - Libertà
 Due poltrone e un palco         - Candlelight
-
-
-{ id:"", title:"", passHash:"",  desc:"", parent:"", img:"" },
-
-var ACH = [
-  { id:"root_locked", title:"Scorri a destra", nonUnlockable:true },
-  { id:"root",  title:"NOI", desc:"Quanto ci metteremo a completarli tutti?", img:"imgs/root.jpeg" },
-  { id:"app",   title:"Primo appuntamento",               passHash:"23301b166e8d243ccbe8bc045845565e1b14ee47cf29a2cd4b773ab58ecb8dc8",  desc:"Usciamo insieme per la prima volta",                                            parent:"root",  img:"" },
-  { id:"parl",  title:"Parliamone",                       passHash:"67b67b20441fc9b3dd4bddd3423c3feb37cef9bbc3ab3bd651013ccdf41cc2b9",  desc:"Parliamo di quello che abbiamo dentro" ,                                        parent:"app",   img:"" },
-  { id:"2%",    title:"Il 2%",                            passHash:"a0d40406ffc7f80414bec7d3dc2a999afa8b1a3a8e4d4c064cb7aa798506a867",  desc:"Sconfiggiamoloooo",                                                             parent:"parl",  img:"" },
-  { id:"ins",   title:"Insieme",                          passHash:"a141b92ae81141abe9089f1d1b67590fb0c126b118f3464b8d54d4ccfe0423e4",  desc:"Mettiamoci insieme",                                                            parent:"2%",    img:"" },
-  { id:"star",  title:"Stargazing",                       passHash:"334a5b756e3e8797c7076efdcbceaa9fbb0d89dffc6460932eee75a85e56907a",  desc:"Andiamo a vedere le stelle",                                                    parent:"ins",   img:"" },
-  { id:"bac",   title:"Primo bacio",                      passHash:"75f9577a1637cf7a30d4fc7c7839d5c71b626946b0f784ee92da0f1ae4e707df",  desc:"C'è una coperta in macchina?",                                                  parent:"ins",   img:"" },
-  { id:"1pap",  title:"Pappa insieme",                    passHash:"6819bef423d8343bd2699ee6595788795e9ede5857b12f0d40e9f1b26f6e88de",  desc:"Mangiamo qualcosa insieme",                                                     parent:"ins",   img:"" },
-  { id:"gel",   title:"Qualcosa di freddo",               passHash:"57c4dafd4f75551f11884d0060d39fc94f862c2f4dc06f447c104f9e7e18cd2c",  desc:"Mangiamo un gelato insieme",                                                    parent:"1pap",  img:"" },
-  { id:"1rist", title:"Ristorante",                       passHash:"b9c9b8a9cca94f1613816c201d9108ccdc1909d7311a0010aa372f780f3ba613",  desc:"Andiamo in ristorante??",                                                       parent:"1pap",  img:"" },
-  { id:"mc",    title:"Mc o Burger?",                     passHash:"56e1f235f429e01383640c5dd1f0ae7769435473a1cb202fd5e062430181b8d4",  desc:"Mangiamo ad un Fast Food",                                                      parent:"1rist", img:"" },
-  { id:"sushi", title:"Japan moment",                     passHash:"4492500b15566370cb1305c2c47eca29600ceb6571388afd4615869cae63b087",  desc:"Andiamo al Sushi",                                                              parent:"1rist", img:"" },
-  { id:"pizza", title:"Pizza, pasta & mandolino",         passHash:"b38c916a73747abba1d01dbe11ee15714c90d42b23b8328cafc1667e60045e7b",  desc:"Andiamo a mangiare la pizza",                                                   parent:"1rist", img:"" },
-  { id:"1git",  title:"Gitarella",                        passHash:"5b5293fcfa17b93ceeaf6d2b9c67ff01999370a220c88a28caae371522c20c40",  desc:"Facciamo una gita, io e te",                                                    parent:"ins",   img:"" },
-  { id:"mon",   title:"Quanto manca?",                    passHash:"4eb8d150678874689a1ea460d0d69f87cc070d4f0ba9f533b131cad286676489",  desc:"Ci facciamo una bella camminata in montagna",                                   parent:"1git",  img:"" },
-  { id:"spia",  title:"Benvenuta a Spiazzi",              passHash:"e1c99555058ad1a61c1c782c2dc6b40d7739684f5b54cf550313a69a0878494f",  desc:"Andiamo a Spiazzi di Gromo",                                                    parent:"mon",   img:"" },
-  { id:"vac",   title:"Holiday",                          passHash:"5bc8584eb814a6f59080c024a2e8e22265e1502c19fa90b4b8c38bbf15813aa2",  desc:"Andiamo in gita di più giorni, anche per un solo weekend",                      parent:"1git",  img:"" },
-  { id:"mare",  title:"Sabbia o rocce?",                  passHash:"c73945f50f222256ad7ab74443e10d67edc721592a2055fc26866d78d4bdd584",  desc:"Andiamo al mare",                                                               parent:"1git",  img:"" },
-  { id:"santa", title:"E' mooolto lunga",                 passHash:"2a655bcf8061a4e8d1bc945e98681c8ee6f30dfae821ec9dee25a9e55ee5dcff",  desc:"Scorrazziamo per l'italia fino a Santa Cesarea",                                parent:"mare",  img:"" },
-  { id:"est",   title:"Fuori",                            passHash:"35ec968c583ba47519785f799fbfbb666ddfd17028e83cf6f82c93e57ecc5840",  desc:"Andiamo all'estero",                                                            parent:"vac",   img:"" },
-  { id:"1film", title:"Appuntamento Film",                passHash:"6b627ebc49ac32bc5d6e89eaef285fd6e00cf0eb04a2b19b14dd4d5767d9fcf6",  desc:"Guardiamo un film insieme",                                                     parent:"ins",   img:"" },
-  { id:"1game", title:"Appuntamento Gioco",               passHash:"ee43612356a0282d0ea2e3027275e2be9f0c4bd5e8f22eb6010d564f3cbfbb66",  desc:"Giochiamo a carte, ad un gioco da tavolo o a in videogioco insieme",            parent:"ins",   img:"" },
-  { id:"torn",  title:"Casinò",                           passHash:"d7439d3523e0e58910dbcfb9e8edda0b5882e705f6f4143158052ff8ea5593e6",  desc:"Concludiamo un torneo a carte, che sia scala, macchiavelli o scopa",            parent:"1game", img:"" },
-  { id:"1vg",   title:"Slot Machine",                     passHash:"c2028759cf0dd2bcf934f14f268e5f2577532a175bf3a95fb7a83e20e34187a2",  desc:"Giochiamo ad un videogame insieme",                                             parent:"1game", img:"" },
-  { id:"mine",  title:"First we mine, then we craft",     passHash:"edcf837a324d27b4e2c9e362dbfc411c8cd2a3f019f67e95fa0740e498594aa3",  desc:"Let's Minecraft",                                                               parent:"1vg",   img:"" },
-  { id:"tav",   title:"E' guerra",                        passHash:"4918cd225d054252e3500d8a40bad9ddc264596e8a623db4fe586cf884dce423",  desc:"Giochiamo a un gioco da tavolo famoso, come Risiko, Monopoly o Ticket To Ride", parent:"1game", img:"" },
-  { id:"cin",   title:"Qualcuno ha detto cinema?",        passHash:"d37b44f196cca22273d47ed85011bc9048be455c709a9f80b5cf0db775518313",  desc:"Andiamo al cinema a vedere un film",                                            parent:"1film", img:"" },
-  { id:"teat",  title:"Due poltrone e un palco",          passHash:"8350ec38b441fc78796cd4b4a98b775d54083a0b14f011493021da9eeeadb037",  desc:"Andiamo a teatro",                                                              parent:"1film", img:"" },
-  { id:"hg1",   title:"The Hunger Games",                 passHash:"6b51d431df5d7f141cbececcf79edf3dd861c3b4069f0b11661a3eefacbba918",  desc:"Guardiamo il primo film dei giochi della fame",                                 parent:"1film", img:"" },
-  { id:"hg2",   title:"Ci sono giochi peggiori",          passHash:"a1225b8c7b2eb8c3272e3812844c2742962343ac1abeeaa7be0ef82495dfc3d0",  desc:"Finiamo tutti e quattro i film di Hunger Games",                                parent:"hg1",   img:"" },
-  { id:"sw1",   title:"In una galassia lontana lontana",  passHash:"90a34d07a3826b71ee32fd635f1bf6ab6374240aeab4d3e423445e79cf9bb6db",  desc:"Guardiamo il primo film di Star Wars",                                          parent:"1film", img:"" },
-  { id:"sw2",   title:"Guerre Stellari",                  passHash:"69946e554343dc92cbf4f9e2262959e23f4d344db0b5840f0fe2aefeae42d0dc",  desc:"Finiamo la prima trilogia di Star Wars.\nSiamo a metàààà",                      parent:"sw1",   img:"" },
-  { id:"sw3",   title:"La Saga degli Skywalker",          passHash:"de77a8cd25c430bbbf84b7d7b1dbc3f62a17ecec5b9620a042e78c75d2700449",  desc:"Finiamo tutti e sei i film della saga degli Skywalker.\nCe l'hai fattaaaaaa",   parent:"sw2",   img:"" },
-  { id:"lotr1", title:"La Terra di Mezzo",                passHash:"b9ff7281378585ccb49051d55a3bb5c157d43d07ea2ab8b11beaa74a234091c5",  desc:"Guardiamo il primo film del Signore degli Anelli",                              parent:"1film", img:"" },
-  { id:"lotr2", title:"Il Signore degli Anelli",          passHash:"fca916d296adbbbe1a012fcbd94a907abc911d8f5a2eeefa3bfa3713d4c3b494",  desc:"Finiamo la trilogia del Signore degli Anelli",                                  parent:"lotr1", img:"" },
-  { id:"lotr3", title:"Lo Hobbit",                        passHash:"91fec12b1ed46d4c48d600d6f9e553766d8283c6b458bcef0d9bd3e21f493bcb",  desc:"Finiamo la seconda trilogia, nonchè Lo Hobbit",                                 parent:"lotr2", img:"" },
-  { id:"dg1",   title:"Questa è Berk",                    passHash:"eeb062569c13d9e233abf6713dca7be1632718838a236f22ad90615c533a69e3",  desc:"Guardiamo il primo di Dragon Trainer",                                          parent:"1film", img:"" },
-  { id:"dg2",   title:"Come addestrare un drago",         passHash:"6d95ede8e06d1de8e516aa7e032b7d5468fc42823cec7a7bfdb4d12107c62d4c",  desc:"Finiamo la trilogia di Dragon Trainer",                                         parent:"dg1",   img:"" },
-  { id:"mya",   title:"Animazione",                       passHash:"ce16eed69d0efc9dd51f852f018a1946cef7a5e72f74365a65882d40ee6aaac8",  desc:"Guardiamo un film di Myazaki",                                                  parent:"1film", img:"" },
-  { id:"scelt", title:"Finalmente scegli tu",             passHash:"cd3f0ff72297eedac37d674e8300caeda3e107b0a8a296f101c73ce448cb88ef",  desc:"Guardiamo un film che scegli tu",                                               parent:"1film", img:"" }
-];
+E' guerra                       - 1v1
+E' mooolto lunga                - Dodici ore
+Finalmente scegli tu            - Obbligato
+First we mine then we craft     - Creeper
+Fuori                           - Islanda?
+Gitarella                       - Segrino
+Guerre Stellari                 - Originale
+Holiday                         - Gitona
+Il 2%                           - Cattivone
+Il Signore degli Anelli         - Smeagol
+In una galassia lontana lontana - Skywalker
+Insieme                         - Porada
+Japan moment                    - Pesciolini
+La Saga degli Skywalker         - R2D2
+La Terra di Mezzo               - Beggins
+Lo Hobbit                       - Smaug
+Mc o Burger?                    - Burger
+Pappa insieme                   - Gnam
+Parliamone                      - Ritiro
+Pizza, pasta & mandolino        - Margherita     
+Primo appuntamento              - Convinzione
+Primo bacio                     - Rosa
+Qualcosa di freddo              - Pistacchio
+Qualcuno ha detto cinema?       - IMAX?
+Quanto manca?                   - Tanto
+Questa è Berk                   - Sintesi illuminante
+Ristorante                      - Fast Food
+Sabbia o rocce?                 - Snorkeling
+Slot Machine                    - Tetris
+Stargazing                      - Telescoppio
+The Hunger Games                - 12
