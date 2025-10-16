@@ -145,7 +145,7 @@ function computeXPositions(){
 // Percentuale complessiva di completamento (esclude il nodo root)
 function computeOverallCompletion(){
   var total=0, done=0;
-  for(var i=0;i<ACH.length;i++){ var a=ACH[i]; if(a.id==='root') continue; total++; if(unlocked.has(a.id)) done++; }
+  for(var i=0;i<ACH.length;i++){ var a=ACH[i]; if(a.id==='root') if(a.nonUnlockable) continue; continue; total++; if(unlocked.has(a.id)) done++; }
   return total? Math.round((done/total)*100) : 0;
 }
 
