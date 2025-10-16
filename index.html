@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="it">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>blank</title>
+<style>
+  :root{ --bg:#0b0e14; --card:#121723; --muted:#9aa4b2; --line:#384152; --ok:#4ade80; --gap:0px; --unlocked:#127cff; }
+  html,body{height:100%}
+  body{margin:0;font-family:system-ui,Segoe UI,Roboto,Arial;background:var(--bg);color:#e6e6e6;background-image: url("imgs/bg.jpg"); background-size: cover; background-position: center; background-repeat: no-repeat; }
+  header{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid #1e2430;background:#0c111b;position:sticky;top:0;z-index:10} 
+  header h1 { justify-self:center; text-align:center; margin:0; }
+  header.completion { justify-self:start; }
+  header.actions { justify-self:end; }
+  h1{font-size:18px;margin:0}
+  .actions{display:flex;gap:8px}
+  button{background:#1a2232;color:#e6e6e6;border:1px solid #2a3244;border-radius:10px;padding:8px 10px;cursor:pointer}
+  .wrap{position:relative;padding:24px}
+  #tree{position:relative;min-height:70vh;overflow-x:auto;-webkit-overflow-scrolling:touch; display:block; text-align:left;}
+  #edges{position:absolute;inset:0;pointer-events:none}
+  .level{display:grid;grid-auto-flow:column;grid-auto-columns:180px;gap:var(--gap);justify-content:start;margin-bottom:28px;align-items:start}
+  .node{position:relative;width:100%;border:1px solid #2a2f3a;border-radius:14px;padding:12px;min-height:180px;background:var(--card);cursor:pointer;box-shadow:0 1px 0 rgba(0,0,0,.4)}
+  .node img{width:100%;height:110px;object-fit:cover;border-radius:10px}
+  .title{margin-top:8px;font-size:14px}
+  .node.locked img,.node.unavailable img{display:none}
+  .node.unavailable{opacity:.85}
+  .node.unlocked{border-color:rgba(97, 168, 255, 0.85); background:rgba(67, 152, 255, 0.438); box-shadow:0 0 0 2px rgba(96,165,250,.35) inset}
+  .prompt{display:none;position:absolute;left:8px;right:8px;bottom:8px;background:#0f1420;border:1px solid #2a2f3a;border-radius:10px;padding:8px;z-index:2}
+  .node.show .prompt{display:block}
+  .prompt input{width:90%;padding:8px;border-radius:8px;border:1px solid #394152;background:#0b0e14;color:#e6e6e6}
+  .hint{font-size:12px;color:var(--muted);margin-top:6px}
+  .completion{font-size:13px;color:var(--muted);background:rgba(255,255,255,0.02);padding:6px 10px;border-radius:10px;border:1px solid rgba(255,255,255,0.02)}
+  .front-desc{display:none;font-size:13px;color:var(--muted);margin:8px 0}
+  .node.locked .front-desc{display:block}
+  .node.unavailable .front-desc{display:none}
+  .node.unlocked .front-desc{display:none}
+  .desc-under{display:none;font-size:12px;color:var(--muted);margin:6px 0}
+  .node.unlocked .desc-under{display:block}
+  .pw-hover{display:none;position:absolute;left:8px;right:8px;bottom:8px;background:#0f1420;border:1px solid #2a2f3a;border-radius:10px;padding:8px;font-family:ui-monospace,Consolas;font-size:13px;z-index:3}
+  .node.unlocked:hover .pw-hover{display:block}
+  /* nascondi hover pw solo per root */
+  .node[data-id="root"] .pw-hover{display:none !important}
+  .node.show .pw-hover{display:none}
+  /* Titolo centrato per unavailable */
+  .node.unavailable{ position:relative; }
+  .node.unavailable .title{ position:absolute; left:12px; right:12px; top:12px; bottom:12px; display:flex; align-items:center; justify-content:center; font-weight:600; text-align:center; background:rgba(15,20,32,.6); border-radius:10px; }
+  .node.unavailable.show .title, .node.unavailable.show-desc .title{ display:none; }
+  @media (max-width: 480px){ .wrap{padding:12px} .level{gap:12px} .node{min-height:160px} .prompt{left:6px; right:6px; bottom:6px} .prompt input{font-size:16px} }
+  #tree { text-align: left; display:block; }
+  #levels { display: inline-block; min-width: max-content; }
+</style>
+<header>
+  <div id="completion" class="completion">0%</div>
+  <h1>Achievement Tree</h1>
+  <div class="actions">
+    <button id="reset">Reset progressi</button>
+  </div>
+</header>
+<div class="wrap">
+  <div id="tree">
+    <svg id="edges" width="0" height="0"></svg>
+    <div id="levels"></div>
+  </div>
+</div>
+
+<script>
+'use strict';
+
+/* ================ CONFIG ================ */
+var ACH = [
+  { id:"root_locked", title:"Scorri a destra", nonUnlockable:true },
+  { id:"root",  title:"NOI", desc:"Quanto ci metteremo a completarli tutti?", img:"imgs/root.jpeg" },
+  { id:"app",   title:"Primo appuntamento",               passHash:"23301b166e8d243ccbe8bc045845565e1b14ee47cf29a2cd4b773ab58ecb8dc8",  desc:"Usciamo insieme per la prima volta",                                            parent:"root",  img:"imgs/app.jpeg" },
+  { id:"parl",  title:"Parliamone",                       passHash:"67b67b20441fc9b3dd4bddd3423c3feb37cef9bbc3ab3bd651013ccdf41cc2b9",  desc:"Parliamo di quello che abbiamo dentro" ,                                        parent:"app",   img:"imgs/parl.jpeg" },
+  { id:"2%",    title:"Il 2%",                            passHash:"a0d40406ffc7f80414bec7d3dc2a999afa8b1a3a8e4d4c064cb7aa798506a867",  desc:"Sconfiggiamoloooo",                                                             parent:"parl",  img:"imgs/2%.jpg" },
+  { id:"ins",   title:"Insieme",                          passHash:"a141b92ae81141abe9089f1d1b67590fb0c126b118f3464b8d54d4ccfe0423e4",  desc:"Mettiamoci insieme",                                                            parent:"2%",    img:"imgs/ins.jpeg" },
+  { id:"bac",   title:"Primo bacio",                      passHash:"75f9577a1637cf7a30d4fc7c7839d5c71b626946b0f784ee92da0f1ae4e707df",  desc:"C'è una coperta in macchina?",                                                  parent:"ins",   img:"imgs/bac.jpeg" },
+  { id:"star",  title:"Stargazing",                       passHash:"334a5b756e3e8797c7076efdcbceaa9fbb0d89dffc6460932eee75a85e56907a",  desc:"Andiamo a vedere le stelle",                                                    parent:"ins",   img:"imgs/star.jpg" },
+  { id:"1pap",  title:"Pappa insieme",                    passHash:"6819bef423d8343bd2699ee6595788795e9ede5857b12f0d40e9f1b26f6e88de",  desc:"Mangiamo qualcosa insieme",                                                     parent:"ins",   img:"imgs/1pap.jpg" },
+  { id:"gel",   title:"Qualcosa di freddo",               passHash:"57c4dafd4f75551f11884d0060d39fc94f862c2f4dc06f447c104f9e7e18cd2c",  desc:"Mangiamo un gelato insieme",                                                    parent:"1pap",  img:"imgs/gel.jpg" },
+  { id:"1rist", title:"Ristorante",                       passHash:"b9c9b8a9cca94f1613816c201d9108ccdc1909d7311a0010aa372f780f3ba613",  desc:"Andiamo in ristorante??",                                                       parent:"1pap",  img:"imgs/rist.jpeg" },
+  { id:"mc",    title:"Mc o Burger?",                     passHash:"56e1f235f429e01383640c5dd1f0ae7769435473a1cb202fd5e062430181b8d4",  desc:"Mangiamo ad un Fast Food",                                                      parent:"1rist", img:"imgs/mc.png" },
+  { id:"sushi", title:"Japan moment",                     passHash:"4492500b15566370cb1305c2c47eca29600ceb6571388afd4615869cae63b087",  desc:"Andiamo al Sushi",                                                              parent:"1rist", img:"imgs/sushi.jpg" },
+  { id:"pizza", title:"Pizza, pasta & mandolino",         passHash:"b38c916a73747abba1d01dbe11ee15714c90d42b23b8328cafc1667e60045e7b",  desc:"Andiamo a mangiare la pizza",                                                   parent:"1rist", img:"imgs/pizza.jpg" },
+  { id:"1git",  title:"Gitarella",                        passHash:"5b5293fcfa17b93ceeaf6d2b9c67ff01999370a220c88a28caae371522c20c40",  desc:"Facciamo una gita, io e te",                                                    parent:"ins",   img:"imgs/1gita.jpg" },
+  { id:"mon",   title:"Quanto manca?",                    passHash:"4eb8d150678874689a1ea460d0d69f87cc070d4f0ba9f533b131cad286676489",  desc:"Ci facciamo una bella camminata in montagna",                                   parent:"1git",  img:"imgs/mon.jpeg" },
+  { id:"spia",  title:"Benvenuta a Spiazzi",              passHash:"2054a2c8c2762e87dcc61db3cd7a91660e40df2951132fb293cc5fb21fe8d235",  desc:"Andiamo a Spiazzi di Gromo",                                                    parent:"mon",   img:"imgs/spia.jpg" },
+  { id:"vac",   title:"Holiday",                          passHash:"f9488eefd1317498aeb9df01874f12c2a6c41992a3160d7f074a1e66aaf0e27b",  desc:"Andiamo in gita di più giorni, anche per un solo weekend",                      parent:"1git",  img:"imgs/vac.jpg" },
+  { id:"mare",  title:"Sabbia o rocce?",                  passHash:"19e2e38b01edae49bcd14fbefc80cc58eaaa83f0f721b3d1508e11f07da2812c",  desc:"Andiamo al mare",                                                               parent:"1git",  img:"imgs/mare.jpg" },
+  { id:"santa", title:"E' mooolto lunga",                 passHash:"2a655bcf8061a4e8d1bc945e98681c8ee6f30dfae821ec9dee25a9e55ee5dcff",  desc:"Scorrazziamo per l'italia fino a Santa Cesarea",                                parent:"mare",  img:"imgs/santa.jpg" },
+  { id:"est",   title:"Fuori",                            passHash:"35ec968c583ba47519785f799fbfbb666ddfd17028e83cf6f82c93e57ecc5840",  desc:"Andiamo all'estero",                                                            parent:"vac",   img:"imgs/est.jpg" },
+  { id:"1film", title:"Appuntamento Film",                passHash:"6b627ebc49ac32bc5d6e89eaef285fd6e00cf0eb04a2b19b14dd4d5767d9fcf6",  desc:"Guardiamo un film insieme",                                                     parent:"ins",   img:"imgs/1film.jpeg" },
+  { id:"1game", title:"Appuntamento Gioco",               passHash:"ee43612356a0282d0ea2e3027275e2be9f0c4bd5e8f22eb6010d564f3cbfbb66",  desc:"Giochiamo a carte insieme",                                                     parent:"ins",   img:"imgs/1game.jpg" },
+  { id:"torn",  title:"Casinò",                           passHash:"d7439d3523e0e58910dbcfb9e8edda0b5882e705f6f4143158052ff8ea5593e6",  desc:"Concludiamo un torneo a carte, che sia scala, macchiavelli o scopa",            parent:"1game", img:"imgs/torn.png" },
+  { id:"1vg",   title:"Slot Machine",                     passHash:"c2028759cf0dd2bcf934f14f268e5f2577532a175bf3a95fb7a83e20e34187a2",  desc:"Giochiamo ad un videogame insieme",                                             parent:"1game", img:"imgs/1vg.jpg" },
+  { id:"mine",  title:"First we mine, then we craft",     passHash:"edcf837a324d27b4e2c9e362dbfc411c8cd2a3f019f67e95fa0740e498594aa3",  desc:"Let's Minecraft",                                                               parent:"1vg",   img:"imgs/mine.jpg" },
+  { id:"tav",   title:"E' guerra",                        passHash:"4918cd225d054252e3500d8a40bad9ddc264596e8a623db4fe586cf884dce423",  desc:"Giochiamo a un gioco da tavolo famoso, come Risiko, Monopoly o Ticket To Ride", parent:"1game", img:"imgs/tav.jpg" },
+  { id:"cin",   title:"Qualcuno ha detto cinema?",        passHash:"d37b44f196cca22273d47ed85011bc9048be455c709a9f80b5cf0db775518313",  desc:"Andiamo al cinema a vedere un film",                                            parent:"1film", img:"imgs/cin.jpg" },
+  { id:"teat",  title:"Due poltrone e un palco",          passHash:"8350ec38b441fc78796cd4b4a98b775d54083a0b14f011493021da9eeeadb037",  desc:"Andiamo a teatro",                                                              parent:"1film", img:"imgs/teat.jpg" },
+  { id:"hg1",   title:"The Hunger Games",                 passHash:"6b51d431df5d7f141cbececcf79edf3dd861c3b4069f0b11661a3eefacbba918",  desc:"Guardiamo il primo film di Hunger Games",                                       parent:"1film", img:"imgs/hg1.jpg" },
+  { id:"hg2",   title:"Ci sono giochi peggiori",          passHash:"a1225b8c7b2eb8c3272e3812844c2742962343ac1abeeaa7be0ef82495dfc3d0",  desc:"Finiamo tutti e quattro i film di Hunger Games",                                parent:"hg1",   img:"imgs/hg2.jpg" },
+  { id:"sw1",   title:"In una galassia lontana lontana",  passHash:"90a34d07a3826b71ee32fd635f1bf6ab6374240aeab4d3e423445e79cf9bb6db",  desc:"Guardiamo il primo film di Star Wars",                                          parent:"1film", img:"imgs/sw1.jpg" },
+  { id:"sw2",   title:"Guerre Stellari",                  passHash:"69946e554343dc92cbf4f9e2262959e23f4d344db0b5840f0fe2aefeae42d0dc",  desc:"Finiamo la prima trilogia di Star Wars.\nSiamo a metàààà",                      parent:"sw1",   img:"imgs/sw2.jpg" },
+  { id:"sw3",   title:"La Saga degli Skywalker",          passHash:"de77a8cd25c430bbbf84b7d7b1dbc3f62a17ecec5b9620a042e78c75d2700449",  desc:"Finiamo tutti e sei i film della saga degli Skywalker.\nCe l'hai fattaaaaaa",   parent:"sw2",   img:"imgs/sw3.jpg" },
+  { id:"lotr1", title:"La Terra di Mezzo",                passHash:"b9ff7281378585ccb49051d55a3bb5c157d43d07ea2ab8b11beaa74a234091c5",  desc:"Guardiamo il primo film del Signore degli Anelli",                              parent:"1film", img:"imgs/lotr1.jpg" },
+  { id:"lotr2", title:"Il Signore degli Anelli",          passHash:"fca916d296adbbbe1a012fcbd94a907abc911d8f5a2eeefa3bfa3713d4c3b494",  desc:"Finiamo la trilogia del Signore degli Anelli",                                  parent:"lotr1", img:"imgs/lotr2.avif" },
+  { id:"lotr3", title:"Lo Hobbit",                        passHash:"91fec12b1ed46d4c48d600d6f9e553766d8283c6b458bcef0d9bd3e21f493bcb",  desc:"Finiamo la seconda trilogia, nonchè Lo Hobbit",                                 parent:"lotr2", img:"imgs/lotr3.jpg" },
+  { id:"dg1",   title:"Questa è Berk",                    passHash:"eeb062569c13d9e233abf6713dca7be1632718838a236f22ad90615c533a69e3",  desc:"Guardiamo il primo di Dragon Trainer",                                          parent:"1film", img:"imgs/dg1.jpg" },
+  { id:"dg2",   title:"Come addestrare un drago",         passHash:"6d95ede8e06d1de8e516aa7e032b7d5468fc42823cec7a7bfdb4d12107c62d4c",  desc:"Finiamo la trilogia di Dragon Trainer",                                         parent:"dg1",   img:"imgs/dg2.jpg" },
+  { id:"mya",   title:"Animazione",                       passHash:"ce16eed69d0efc9dd51f852f018a1946cef7a5e72f74365a65882d40ee6aaac8",  desc:"Guardiamo un film di Myazaki",                                                  parent:"1film", img:"imgs/mya.webp" },
+  { id:"scelt", title:"Finalmente scegli tu",             passHash:"cd3f0ff72297eedac37d674e8300caeda3e107b0a8a296f101c73ce448cb88ef",  desc:"Guardiamo un film che scegli tu",                                               parent:"1film", img:"imgs/scelt.webp" }
+];
+
+/* ================ STATE ================ */
+var children = {}; for (var i=0;i<ACH.length;i++){ var aCfg=ACH[i]; if(aCfg.parent){ (children[aCfg.parent]||(children[aCfg.parent]=[])).push(aCfg.id); } }
+var unlocked = new Set();
+try{ var saved = JSON.parse(localStorage.getItem('unlocked')||'[]'); for (var s=0;s<saved.length;s++){ unlocked.add(saved[s]); } }catch(e){}
+// Root sbloccato di default
+unlocked.add('root');
+save();
+// memorizza la password usata per mostrarla su hover
+var pwById={}; try{ pwById = JSON.parse(localStorage.getItem('pwById')||'{}'); }catch(e){}
+
+function save(){ localStorage.setItem('unlocked', JSON.stringify(Array.from(unlocked))); }
+function setPw(id,pw){ pwById[id]=pw; try{ localStorage.setItem('pwById', JSON.stringify(pwById)); }catch(e){} }
+function getPw(id){ return pwById[id]||''; }
+function reset(){ unlocked.clear(); unlocked.add('root'); save(); render(); }
+
+/* ================ HELPERS ================ */
+function computeLevels(){
+  var lvl={root:0};
+  function dfs(id){ var kids = children[id]||[]; for (var k=0;k<kids.length;k++){ var cid=kids[k]; lvl[cid]=(lvl[id]!=null?lvl[id]+1:1); dfs(cid);} }
+  dfs('root'); return lvl;
+}
+function isParentUnlocked(a){ if(!a.parent) return true; return unlocked.has(a.parent); }
+function sha256hex(s){ var enc=new TextEncoder().encode(s); return crypto.subtle.digest('SHA-256',enc).then(function(buf){ var out=''; var v=new Uint8Array(buf); for(var i=0;i<v.length;i++){ var h=v[i].toString(16); if(h.length===1) h='0'+h; out+=h; } return out; }); }
+
+// Posizionamento colonnare: figli centrati sul padre, figlio unico allineato al padre
+function computeXPositions(){
+  var pos={}, visited={}, cursor=1;
+  function layout(id){ if(visited[id])return; visited[id]=true; var kids=children[id]||[]; if(!kids.length){ pos[id]=cursor; cursor+=2; return; } for(var i=0;i<kids.length;i++){ layout(kids[i]); } var sum=0; for(var j=0;j<kids.length;j++){ sum+=pos[kids[j]]||0; } pos[id]=Math.round(sum/kids.length); }
+  layout('root'); return pos;
+}
+
+// Percentuale complessiva di completamento (esclude il nodo root)
+function computeOverallCompletion(){
+  var total=0, done=0;
+  for(var i=0;i<ACH.length;i++){ var a=ACH[i]; if(a.id==='root') continue; total++; if(unlocked.has(a.id)) done++; }
+  return total? Math.round((done/total)*100) : 0;
+}
+
+function updateCompletion(){
+  var el = document.getElementById('completion'); if(!el) return; el.textContent = computeOverallCompletion() + '%';
+}
+
+/* ================ RENDER ================ */
+function render(){
+  var levelsEl=document.getElementById('levels');
+  var edges=document.getElementById('edges');
+  if(!levelsEl||!edges) return;
+  levelsEl.innerHTML=''; edges.innerHTML='';
+
+  var lvl=computeLevels();
+  var xpos=computeXPositions();
+  var globalMaxCol=1; for(var key in xpos){ if(Object.prototype.hasOwnProperty.call(xpos,key)){ if(xpos[key]>globalMaxCol) globalMaxCol=xpos[key]; } }
+
+  // raggruppa per livello
+  var groups=[]; var maxLevel=0; for(var id in lvl){ if(lvl[id]>maxLevel) maxLevel=lvl[id]; }
+  for(var g=0; g<maxLevel+1; g++){ groups.push([]); }
+  for(var m=0;m<ACH.length;m++){ var it=ACH[m]; var li=lvl[it.id]||0; groups[li].push(it); }
+
+  for(var rowIdx=0; rowIdx<groups.length; rowIdx++){
+    var arr=groups[rowIdx];
+    var row=document.createElement('div'); row.className='level';
+    row.style.gridTemplateColumns='repeat('+(globalMaxCol+2)+', 180px)'; // 180px nodo, gap via CSS
+
+    for(var ai=0; ai<arr.length; ai++){
+      var a=arr[ai];
+      var div=document.createElement('div'); div.className='node';
+      if (a.nonUnlockable) div.classList.add('unavailable');
+      else if(unlocked.has(a.id)) div.classList.add('unlocked'); else if(!isParentUnlocked(a)) div.classList.add('unavailable'); else div.classList.add('locked');
+      div.setAttribute('data-id', a.id);
+      div.style.gridColumn=String(xpos[a.id]||1);
+
+      // IMG
+      var imgEl=document.createElement('img'); imgEl.alt=a.title; imgEl.src=a.img;
+      // TITLE
+      var titleEl=document.createElement('div'); titleEl.className='title'; titleEl.appendChild(document.createTextNode(a.title));
+      // front-desc: visibile quando bloccato ma sbloccabile
+      var frontDescEl=document.createElement('div'); frontDescEl.className='front-desc'; if(a.desc){ frontDescEl.appendChild(document.createTextNode(a.desc)); }
+      // desc-under: visibile SOLO quando sbloccato
+      var descUnderEl=document.createElement('div'); descUnderEl.className='desc-under'; if(a.desc){ descUnderEl.appendChild(document.createTextNode(a.desc)); }
+      // prompt (non creato per nodi non sbloccabili)
+      var promptEl = null;
+      var inputEl = null;
+      if (!a.nonUnlockable){
+        promptEl = document.createElement('div'); promptEl.className = 'prompt';
+        inputEl = document.createElement('input'); inputEl.type = 'password'; inputEl.placeholder = 'Inserisci password'; inputEl.autocomplete = 'current-password';
+        var hintEl = document.createElement('div'); hintEl.className = 'hint'; hintEl.appendChild(document.createTextNode('Invio per sbloccare - Esc per chiudere'));
+        promptEl.appendChild(inputEl); promptEl.appendChild(hintEl);
+      }
+      // pw-hover su sbloccato
+      var pwHoverEl = null;
+      if (!a.nonUnlockable){ pwHoverEl = document.createElement('div'); pwHoverEl.className = 'pw-hover'; var pwText = getPw(a.id); if (pwText){ pwHoverEl.appendChild(document.createTextNode('Password: '+pwText)); } }
+
+      // mount
+      div.appendChild(imgEl);
+      div.appendChild(titleEl);
+      div.appendChild(frontDescEl);
+      if (promptEl) div.appendChild(promptEl);
+      div.appendChild(descUnderEl);
+      if (pwHoverEl) div.appendChild(pwHoverEl);
+      attachNodeHandlers(div,a);
+      row.appendChild(div);
+    }
+    levelsEl.appendChild(row);
+  }
+
+  updateCompletion();
+  requestAnimationFrame(drawEdges);
+}
+
+function attachNodeHandlers(div, it){
+  var input = div.querySelector('input');
+  var prompt = div.querySelector('.prompt');
+  // se il nodo è marcato nonUnlockable, non risponde a click o key
+  if (it.nonUnlockable){
+    div.addEventListener('click', function(e){ e.stopPropagation(); });
+    return;
+  }
+  div.addEventListener('click', function(e){
+    e.stopPropagation();
+    if(unlocked.has(it.id)){
+      if(div.classList.contains('show-desc')) div.classList.remove('show-desc'); else div.classList.add('show-desc');
+      return;
+    }
+    // mostra sempre il prompt anche se parent bloccato
+    div.classList.add('show');
+    if(input){ input.disabled=false; input.placeholder='Inserisci password'; input.focus(); }
+  });
+  if(prompt){ prompt.addEventListener('click', function(e){ e.stopPropagation(); }); }
+  div.addEventListener('keydown', function(e){
+    if(e.key==='Escape'){ div.classList.remove('show'); div.classList.remove('show-desc'); return; }
+    if(e.key==='Enter'){
+      var val = input ? input.value.trim() : '';
+      if(!input) return;
+      if(it.passHash===''){ if(val.length>0){ unlocked.add(it.id); setPw(it.id,val); save(); render(); } else { input.value=''; input.placeholder='Password errata'; } }
+      else { sha256hex(val).then(function(hash){ if(hash===it.passHash){ unlocked.add(it.id); setPw(it.id,val); save(); render(); } else { input.value=''; input.placeholder='Password errata'; } }); }
+    }
+  });
+}
+
+document.addEventListener('click', function(){ var open=document.querySelectorAll('.node.show, .node.show-desc'); for(var i=0;i<open.length;i++){ open[i].classList.remove('show'); open[i].classList.remove('show-desc'); } });
+var resetBtn=document.getElementById('reset'); if(resetBtn){ resetBtn.addEventListener('click', reset); }
+
+/* ================ EDGES ================ */
+function drawEdges(){
+  var tree   = document.getElementById('tree');
+  var levels = document.getElementById('levels');
+  var edges  = document.getElementById('edges');
+  if(!tree || !levels || !edges) return;
+  var w = levels.scrollWidth; var h = levels.scrollHeight || tree.clientHeight;
+  edges.setAttribute('width', String(w)); edges.setAttribute('height', String(h));
+  edges.setAttribute('viewBox', '0 0 '+w+' '+h); edges.style.width=w+'px'; edges.style.height=h+'px';
+  edges.innerHTML='';
+  function centerBottom(el){ return { x: el.offsetLeft + el.offsetWidth/2, y: el.offsetTop + el.offsetHeight }; }
+  function topCenter(el){ return { x: el.offsetLeft + el.offsetWidth/2, y: el.offsetTop }; }
+  for(var i=0;i<ACH.length;i++){
+    var a=ACH[i]; if(!a.parent) continue;
+    var child=document.querySelector('[data-id="'+a.id+'"]');
+    var parent=document.querySelector('[data-id="'+a.parent+'"]');
+    if(!child||!parent) continue;
+    var p=centerBottom(parent), c=topCenter(child); var midY=(p.y+c.y)/2;
+    var path=document.createElementNS('http://www.w3.org/2000/svg','path');
+    path.setAttribute('d','M '+p.x+' '+p.y+' L '+p.x+' '+midY+' L '+c.x+' '+midY+' L '+c.x+' '+c.y);
+    path.setAttribute('fill','none'); path.setAttribute('stroke','#6b7280'); path.setAttribute('stroke-width','2'); path.setAttribute('stroke-linecap','square'); path.setAttribute('stroke-linejoin','miter');
+    edges.appendChild(path);
+  }
+}
+
+window.addEventListener('load', function(){ requestAnimationFrame(drawEdges); });
+window.addEventListener('resize', function(){ requestAnimationFrame(drawEdges); });
+var treeScroll=document.getElementById('tree'); if(treeScroll){ treeScroll.addEventListener('scroll', function(){ requestAnimationFrame(drawEdges); }, {passive:true}); }
+
+// Avvio
+render();
+</script>
+</html>
