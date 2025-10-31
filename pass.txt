@@ -21,6 +21,7 @@ Insieme                         - Porada
 Japan moment                    - Pesciolini
 La Saga degli Skywalker         - R2D2
 La Terra di Mezzo               - Beggins
+Let them cook!                  - Palline
 Lo Hobbit                       - Smaug
 Mc o Burger?                    - Burger
 Pappa insieme                   - Gnam
@@ -37,3 +38,4 @@ Sabbia o rocce?                 - Snorkeling
 Slot Machine                    - Tetris
 Stargazing                      - Telescoppio
 The Hunger Games                - 12
+
